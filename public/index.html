@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Habitos Tracker — Tu mejor versión</title>
+  <meta name="description" content="Aplicación profesional de seguimiento de hábitos y tareas.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="phone-frame">
+    <div class="phone-notch"></div>
+    
+    <!-- ========== AUTH VIEW ========== -->
+    <div id="view-auth" class="view" style="display: none;">
+      <div class="auth-container">
+        <div class="auth-logo">✨</div>
+        <h1 class="auth-title">Habitos Tracker</h1>
+        <p class="auth-subtitle">Inicia sesión o regístrate para continuar</p>
+        
+        <form id="auth-form" class="auth-form">
+          <div class="form-group">
+            <label for="auth-username">Usuario</label>
+            <input type="text" id="auth-username" required placeholder="Tu nombre de usuario">
+          </div>
+          <div class="form-group">
+            <label for="auth-password">Contraseña</label>
+            <input type="password" id="auth-password" required placeholder="••••••••">
+          </div>
+          <div class="form-actions auth-actions">
+            <button type="submit" class="btn btn-primary" id="btn-login">Entrar</button>
+            <button type="button" class="btn btn-ghost" id="btn-register">Registrarse</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ========== HOME VIEW ========== -->
+    <div id="view-home" class="view">
+      <header class="view-header">
+        <div class="header-top">
+          <div>
+            <p class="greeting" id="greeting-text">Buenos días</p>
+            <h1 class="header-title">Mis Hábitos</h1>
+          </div>
+          <div class="header-actions">
+            <button class="icon-btn" id="btn-theme-toggle" title="Cambiar tema">🌓</button>
+            <button class="icon-btn" id="btn-logout" title="Cerrar sesión">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            </button>
+          </div>
+        </div>
+        
+        <div class="header-stats-row">
+          <div class="streak-badge" id="streak-badge">
+            <span class="streak-icon">🔥</span>
+            <span class="streak-count" id="streak-count">0</span>
+          </div>
+        </div>
+
+        <div class="progress-summary" id="progress-summary">
+          <div class="progress-ring-container">
+            <svg class="progress-ring" viewBox="0 0 80 80">
+              <circle class="progress-ring-bg" cx="40" cy="40" r="34"/>
+              <circle class="progress-ring-fill" id="progress-ring-fill" cx="40" cy="40" r="34"/>
+            </svg>
+            <span class="progress-percent" id="progress-percent">0%</span>
+          </div>
+          <div class="progress-info">
+            <p class="progress-label">Progreso de hoy</p>
+            <p class="progress-detail" id="progress-detail">0 de 0 completados</p>
+          </div>
+        </div>
+      </header>
+
+      <div class="view-content" id="habits-list">
+        <div class="empty-state" id="empty-habits">
+          <div class="empty-icon">✨</div>
+          <p class="empty-title">Sin hábitos aún</p>
+          <p class="empty-desc">Toca el botón + para crear tu primer hábito</p>
+        </div>
+      </div>
+
+      <button class="fab" id="fab-add-habit" aria-label="Agregar hábito">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </div>
+
+    <!-- ========== CALENDAR VIEW ========== -->
+    <div id="view-calendar" class="view">
+      <header class="view-header">
+        <h1 class="header-title">Calendario</h1>
+        <p class="header-subtitle">Historial de cumplimiento y tareas</p>
+      </header>
+      <div class="view-content">
+        <div class="calendar-nav">
+          <button class="cal-nav-btn" id="cal-prev">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <h2 class="cal-month-label" id="cal-month-label">Mes</h2>
+          <button class="cal-nav-btn" id="cal-next">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+        <div class="calendar-grid" id="calendar-grid">
+          <div class="cal-day-header">Lun</div>
+          <div class="cal-day-header">Mar</div>
+          <div class="cal-day-header">Mié</div>
+          <div class="cal-day-header">Jue</div>
+          <div class="cal-day-header">Vie</div>
+          <div class="cal-day-header">Sáb</div>
+          <div class="cal-day-header">Dom</div>
+        </div>
+        <div class="calendar-legend" id="calendar-legend">
+          <div class="legend-item"><span class="legend-dot" style="background:var(--bg-elevated)"></span> Sin datos</div>
+          <div class="legend-item"><span class="legend-dot" style="background:var(--accent-warning)"></span> Parcial</div>
+          <div class="legend-item"><span class="legend-dot" style="background:var(--accent-secondary)"></span> Completo</div>
+        </div>
+        <div class="calendar-day-detail" id="calendar-day-detail" style="display:none;">
+          <h3 id="cal-detail-date"></h3>
+          <div class="cal-detail-section">
+            <h4 class="cal-detail-subtitle">Hábitos</h4>
+            <div id="cal-detail-habits-list"></div>
+          </div>
+          <div class="cal-detail-section" style="margin-top: 16px;">
+            <h4 class="cal-detail-subtitle">Tareas (Vencimiento)</h4>
+            <div id="cal-detail-tasks-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== KANBAN TASKS VIEW ========== -->
+    <div id="view-tasks" class="view">
+      <header class="view-header">
+        <div class="header-top">
+          <div>
+            <h1 class="header-title">Tablero</h1>
+            <p class="header-subtitle">Gestión de tareas diarias</p>
+          </div>
+          <div class="tasks-date-badge" id="tasks-date-badge"></div>
+        </div>
+      </header>
+      <div class="view-content kanban-board" id="kanban-board">
+        
+        <div class="kanban-column" data-status="on_hold">
+          <h3 class="kanban-header">En Espera <span class="kanban-count">0</span></h3>
+          <div class="kanban-dropzone" id="zone-on-hold"></div>
+        </div>
+
+        <div class="kanban-column" data-status="ready">
+          <h3 class="kanban-header">Listas <span class="kanban-count">0</span></h3>
+          <div class="kanban-dropzone" id="zone-ready"></div>
+        </div>
+
+        <div class="kanban-column" data-status="in_progress">
+          <h3 class="kanban-header">En Proceso <span class="kanban-count">0</span></h3>
+          <div class="kanban-dropzone" id="zone-in-progress"></div>
+        </div>
+
+        <div class="kanban-column" data-status="completed">
+          <h3 class="kanban-header">Terminadas <span class="kanban-count">0</span></h3>
+          <div class="kanban-dropzone" id="zone-completed"></div>
+        </div>
+
+        <div class="kanban-column" data-status="closed">
+          <h3 class="kanban-header">Cerradas <span class="kanban-count">0</span></h3>
+          <div class="kanban-dropzone" id="zone-closed"></div>
+        </div>
+
+      </div>
+      <button class="fab" id="fab-add-task" aria-label="Agregar tarea">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </div>
+
+    <!-- ========== BOTTOM NAV ========== -->
+    <nav class="bottom-nav" id="bottom-nav">
+      <button class="nav-btn" data-view="calendar" id="nav-calendar">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+        <span>Calendario</span>
+      </button>
+      <button class="nav-btn active" data-view="home" id="nav-home">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+        <span>Home</span>
+      </button>
+      <button class="nav-btn" data-view="tasks" id="nav-tasks">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/>
+        </svg>
+        <span>Kanban</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- ========== MODAL: HABIT FORM ========== -->
+  <div class="modal-overlay" id="modal-habit" style="display:none;">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <h2 class="modal-title" id="modal-habit-title">Nuevo Hábito</h2>
+      <form id="habit-form" autocomplete="off">
+        <input type="hidden" id="habit-id" value="">
+        
+        <div class="form-group">
+          <label for="habit-name">Nombre</label>
+          <input type="text" id="habit-name" placeholder="Ej: Meditar" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="habit-description">Descripción</label>
+          <textarea id="habit-description" placeholder="¿Por qué quieres este hábito?" rows="2"></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="habit-duration">Minutos / día</label>
+            <input type="number" id="habit-duration" value="30" min="1" max="480">
+          </div>
+          <div class="form-group flex-1">
+            <label for="habit-priority">Prioridad</label>
+            <select id="habit-priority">
+              <option value="low">🟢 Baja</option>
+              <option value="medium" selected>🟡 Media</option>
+              <option value="high">🟠 Alta</option>
+              <option value="critical">🔴 Crítica</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Icono</label>
+          <div class="icon-picker" id="icon-picker">
+            <button type="button" class="icon-opt selected" data-icon="⭐">⭐</button>
+            <button type="button" class="icon-opt" data-icon="💪">💪</button>
+            <button type="button" class="icon-opt" data-icon="📚">📚</button>
+            <button type="button" class="icon-opt" data-icon="🧘">🧘</button>
+            <button type="button" class="icon-opt" data-icon="🏃">🏃</button>
+            <button type="button" class="icon-opt" data-icon="💧">💧</button>
+            <button type="button" class="icon-opt" data-icon="🎨">🎨</button>
+            <button type="button" class="icon-opt" data-icon="🎵">🎵</button>
+            <button type="button" class="icon-opt" data-icon="💤">💤</button>
+            <button type="button" class="icon-opt" data-icon="🍎">🍎</button>
+            <button type="button" class="icon-opt" data-icon="✍️">✍️</button>
+            <button type="button" class="icon-opt" data-icon="🧠">🧠</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Color</label>
+          <div class="color-picker" id="color-picker">
+            <button type="button" class="color-opt selected" data-color="#6C5CE7" style="background:#6C5CE7"></button>
+            <button type="button" class="color-opt" data-color="#00B894" style="background:#00B894"></button>
+            <button type="button" class="color-opt" data-color="#E17055" style="background:#E17055"></button>
+            <button type="button" class="color-opt" data-color="#0984E3" style="background:#0984E3"></button>
+            <button type="button" class="color-opt" data-color="#FDCB6E" style="background:#FDCB6E"></button>
+            <button type="button" class="color-opt" data-color="#E84393" style="background:#E84393"></button>
+            <button type="button" class="color-opt" data-color="#00CEC9" style="background:#00CEC9"></button>
+            <button type="button" class="color-opt" data-color="#FF7675" style="background:#FF7675"></button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Días de la semana</label>
+          <div class="days-picker" id="days-picker">
+            <button type="button" class="day-opt selected" data-day="1">L</button>
+            <button type="button" class="day-opt selected" data-day="2">M</button>
+            <button type="button" class="day-opt selected" data-day="3">X</button>
+            <button type="button" class="day-opt selected" data-day="4">J</button>
+            <button type="button" class="day-opt selected" data-day="5">V</button>
+            <button type="button" class="day-opt selected" data-day="6">S</button>
+            <button type="button" class="day-opt selected" data-day="0">D</button>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" id="btn-cancel-habit">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btn-save-habit">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========== MODAL: TASK FORM ========== -->
+  <div class="modal-overlay" id="modal-task" style="display:none;">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <h2 class="modal-title" id="modal-task-title">Nueva Tarea</h2>
+      <form id="task-form" autocomplete="off">
+        <input type="hidden" id="task-id" value="">
+        <input type="hidden" id="task-status" value="ready">
+        
+        <div class="form-group">
+          <label for="task-title">Título</label>
+          <input type="text" id="task-title" placeholder="Ej: Estudiar para examen" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="task-description">Descripción</label>
+          <textarea id="task-description" placeholder="Detalles de la tarea..." rows="2"></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="task-date">Fecha de término</label>
+            <input type="date" id="task-date" required>
+          </div>
+          <div class="form-group flex-1">
+            <label for="task-time">Hora</label>
+            <input type="time" id="task-time">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="task-priority">Prioridad</label>
+            <select id="task-priority">
+              <option value="low">🟢 Baja</option>
+              <option value="medium" selected>🟡 Media</option>
+              <option value="high">🟠 Alta</option>
+              <option value="critical">🔴 Crítica</option>
+            </select>
+          </div>
+          <div class="form-group flex-1" id="task-status-group" style="display: none;">
+            <label for="task-status-select">Estado</label>
+            <select id="task-status-select">
+              <option value="on_hold">En Espera</option>
+              <option value="ready">Listas</option>
+              <option value="in_progress">En Proceso</option>
+              <option value="completed">Terminadas</option>
+              <option value="closed">Cerradas</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Etiqueta de color</label>
+          <div class="color-picker" id="task-color-picker">
+            <button type="button" class="color-opt selected" data-color="#00B894" style="background:#00B894"></button>
+            <button type="button" class="color-opt" data-color="#6C5CE7" style="background:#6C5CE7"></button>
+            <button type="button" class="color-opt" data-color="#E17055" style="background:#E17055"></button>
+            <button type="button" class="color-opt" data-color="#0984E3" style="background:#0984E3"></button>
+            <button type="button" class="color-opt" data-color="#FDCB6E" style="background:#FDCB6E"></button>
+            <button type="button" class="color-opt" data-color="#E84393" style="background:#E84393"></button>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" id="btn-cancel-task">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btn-save-task">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========== CONFIRM DIALOG ========== -->
+  <div class="modal-overlay" id="modal-confirm" style="display:none;">
+    <div class="modal-sheet modal-confirm-sheet">
+      <div class="modal-handle"></div>
+      <div class="confirm-icon">⚠️</div>
+      <h2 class="modal-title" id="confirm-title">¿Estás seguro?</h2>
+      <p class="confirm-message" id="confirm-message">Esta acción no se puede deshacer.</p>
+      <div class="form-actions">
+        <button type="button" class="btn btn-ghost" id="btn-confirm-cancel">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="btn-confirm-ok">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== TOAST ========== -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="js/api.js"></script>
+  <script src="js/calendar.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
